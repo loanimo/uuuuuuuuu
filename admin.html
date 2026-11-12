@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডমিন প্যানেল - লোন ম্যানেজমেন্ট</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <!-- Login Modal -->
+    <div id="loginBox" class="fixed inset-0 bg-slate-900 bg-opacity-70 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-96 max-w-full">
+            <h3 class="text-xl font-bold mb-4 text-center text-slate-900">🔐 অ্যাডমিন লগইন</h3>
+            <p class="text-xs text-slate-500 mb-4 text-center">গোপন প্যানেলে প্রবেশ করতে পাসওয়ার্ড দিন। (<span class="text-emerald-600 font-bold">Mehedi1234@#</span>)</p>
+            <input type="password" id="adminPass" placeholder="পাসওয়ার্ড লিখুন..." class="w-full border border-slate-300 rounded-lg px-4 py-2.5 mb-4 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <button onclick="loginAdmin()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg transition">লগইন করুন</button>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="dashboard" class="hidden min-h-screen flex flex-col">
+        <header class="bg-slate-900 text-white shadow">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                <h1 class="text-xl font-bold flex items-center gap-2">🛠️ লোন অ্যাডমিন ড্যাশবোর্ড</h1>
+                <button onclick="logoutAdmin()" class="text-xs bg-rose-600 hover:bg-rose-700 px-3 py-1.5 rounded transition">লগআউট</button>
+            </div>
+        </header>
+
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 border-b border-slate-200 flex justify-between items-center">
+                    <h2 class="font-bold text-lg">সব লোন আবেদনসমূহ ও ভেরিফিকেশন ছবি</h2>
+                    <button onclick="loadLoans()" class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded hover:bg-emerald-100 transition">🔄 রিফ্রেশ লিস্ট</button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-600 text-xs uppercase border-b border-slate-200">
+                                <th class="p-4">আইডি ও তারিখ</th>
+                                <th class="p-4">গ্রাহকের বিবরণ</th>
+                                <th class="p-4">NID ও TrxID</th>
+                                <th class="p-4">এনআইডি (সামনে-পেছনে) ও সেলফি</th>
+                                <th class="p-4">স্ট্যাটাস</th>
+                                <th class="p-4 text-center">পদক্ষেপ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loanTableBody" class="divide-y divide-slate-100 text-sm">
+                            <!-- Data populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Image Modal for Full View -->
+    <div id="imageModal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4" onclick="closeImageModal()">
+        <div class="bg-white p-2 rounded-xl max-w-2xl w-full text-center relative">
+            <button onclick="closeImageModal()" class="absolute top-2 right-2 bg-rose-600 text-white rounded-full w-8 h-8 font-bold">&times;</button>
+            <img id="modalImg" src="" class="max-h-[80vh] mx-auto rounded-lg">
+        </div>
+    </div>
+
+    <script>
+        // Updated Admin Password
+        const correctPassword = "Mehedi1234@#";
+
+        function loginAdmin() {
+            let pass = document.getElementById('adminPass').value;
+            if(pass === correctPassword) {
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementById('dashboard').classList.remove('hidden');
+                loadLoans();
+            } else {
+                alert("ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।");
+            }
+        }
+
+        function logoutAdmin() {
+            location.reload();
+        }
+
+        function loadLoans() {
+            let loans = JSON.parse(localStorage.getItem('loanApplications')) || [];
+            let tbody = document.getElementById('loanTableBody');
+            tbody.innerHTML = "";
+
+            if(loans.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">কোনো আবেদন জমা হয়নি।</td></tr>`;
+                return;
+            }
+
+            loans.forEach((loan, index) => {
+                let badgeColor = 'bg-amber-100 text-amber-800';
+                if(loan.status === 'Approved') badgeColor = 'bg-emerald-100 text-emerald-800';
+                if(loan.status === 'Rejected') badgeColor = 'bg-rose-100 text-rose-800';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition align-top">
+                        <td class="p-4">
+                            <span class="font-bold text-slate-900 block">${loan.id}</span>
+                            <span class="text-xs text-slate-400">${loan.date}</span>
+                            <span class="block mt-2 font-semibold text-emerald-700">${loan.amount}</span>
+                        </td>
+                        <td class="p-4">
+                            <span class="font-semibold block">${loan.name}</span>
+                            <span class="text-xs text-slate-500">${loan.phone}</span>
+                        </td>
+                        <td class="p-4 font-mono text-xs">
+                            <span class="block">NID: ${loan.nid}</span>
+                            <span class="text-pink-600 font-bold block mt-1">TrxID: ${loan.trx}</span>
+                        </td>
+                        <td class="p-4">
+                            <div class="flex gap-2 items-center">
+                                <div>
+                                    <span class="text-[9px] block text-slate-500 font-semibold">সামনের পাশ</span>
+                                    <img src="${loan.nidFrontImg}" onclick="openImageModal('${loan.nidFrontImg}')" class="w-12 h-12 object-cover rounded border border-slate-300 cursor-pointer hover:opacity-85 shadow-sm">
+                                </div>
+                                <div>
+                                    <span class="text-[9px] block text-slate-500 font-semibold">পেছনের পাশ</span>
+                                    <img src="${loan.nidBackImg}" onclick="openImageModal('${loan.nidBackImg}')" class="w-12 h-12 object-cover rounded border border-slate-300 cursor-pointer hover:opacity-85 shadow-sm">
+                                </div>
+                                <div>
+                                    <span class="text-[9px] block text-slate-500 font-semibold">সেলফি</span>
+                                    <img src="${loan.selfieImg}" onclick="openImageModal('${loan.selfieImg}')" class="w-12 h-12 object-cover rounded border border-slate-300 cursor-pointer hover:opacity-85 shadow-sm">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-4">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold ${badgeColor}">${loan.status}</span>
+                        </td>
+                        <td class="p-4 text-center space-y-1">
+                            <button onclick="updateStatus(${index}, 'Approved')" class="w-full bg-emerald-600 text-white text-xs px-2 py-1 rounded hover:bg-emerald-700 transition">এপ্রুভ</button>
+                            <button onclick="updateStatus(${index}, 'Rejected')" class="w-full bg-rose-600 text-white text-xs px-2 py-1 rounded hover:bg-rose-700 transition">রিজেক্ট</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openImageModal(imgSrc) {
+            document.getElementById('modalImg').src = imgSrc;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+
+        function updateStatus(index, newStatus) {
+            let loans = JSON.parse(localStorage.getItem('loanApplications')) || [];
+            loans[index].status = newStatus;
+            localStorage.setItem('loanApplications', JSON.stringify(loans));
+            loadLoans();
+        }
+    </script>
+</body>
+</html>

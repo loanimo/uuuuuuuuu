@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অনলাইন লোন সার্ভিস - সহজে ও দ্রুত লোন নিন</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-emerald-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">⚡ ইজি লোন বিডি</h1>
+            <nav class="space-x-4 hidden md:flex items-center">
+                <a href="#calculator" class="hover:underline">ক্যালকুলেটর</a>
+                <a href="#apply" class="hover:underline">আবেদন করুন</a>
+                <a href="#tracker" class="hover:underline font-semibold bg-emerald-700 px-3 py-1.5 rounded-lg">স্ট্যাটাস চেক</a>
+                <a href="admin.html" target="_blank" class="text-xs bg-slate-800 text-emerald-400 px-2.5 py-1 rounded font-mono">🔐 অ্যাডমিন</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-emerald-700 to-teal-600 text-white py-16 px-4 text-center">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4">মাত্র ৪৫০ টাকা আবেদন ফীতে সহজ লোন</h2>
+            <p class="text-lg text-emerald-100 mb-8">ঝামেলাহীন শর্তে ঘরে বসেই লোন আবেদন করুন এবং ২৪ ঘণ্টার মধ্যে ক্যাশ আউট করুন।</p>
+            <a href="#apply" class="bg-white text-emerald-700 font-bold px-8 py-3 rounded-full shadow-lg hover:bg-emerald-50 transition">এখনই আবেদন করুন</a>
+        </div>
+    </section>
+
+    <!-- Status Tracker Section -->
+    <section id="tracker" class="max-w-4xl mx-auto px-4 py-12">
+        <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-slate-100">
+            <h3 class="text-2xl font-bold text-slate-900 mb-2">🔍 আবেদনের বর্তমান অবস্থা চেক করুন</h3>
+            <p class="text-sm text-slate-500 mb-6">আপনার আবেদন জমা দেওয়ার সময় প্রাপ্ত রেফারেন্স আইডি বা মোবাইল নম্বর দিয়ে স্ট্যাটাস জানুন।</p>
+            
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input type="text" id="trackInput" placeholder="রেফারেন্স আইডি (যেমন: LN-12345) বা মোবাইল নম্বর দিন..." class="flex-1 border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <button onclick="checkStatus()" class="bg-emerald-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-emerald-700 transition">স্ট্যাটাস দেখুন</button>
+            </div>
+
+            <div id="statusResult" class="mt-6 hidden p-4 rounded-lg bg-slate-50 border border-slate-200"></div>
+        </div>
+    </section>
+
+    <!-- Calculator & Bkash Info -->
+    <main class="max-w-5xl mx-auto px-4 py-10 grid md:grid-cols-2 gap-8">
+        <div id="calculator" class="bg-white p-6 rounded-2xl shadow-md border border-slate-100">
+            <h3 class="text-xl font-bold text-slate-900 mb-4">📊 ইএমআই (EMI) ক্যালকুলেটর</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">লোনের পরিমাণ: <span id="loanAmountVal" class="font-bold text-emerald-600">৫০,০০০</span> টাকা</label>
+                    <input type="range" id="loanAmount" min="10000" max="200000" step="5000" value="50000" class="w-full accent-emerald-600" oninput="calculateEMI()">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">সময়কাল: <span id="loanMonthVal" class="font-bold text-emerald-600">১২</span> মাস</label>
+                    <input type="range" id="loanMonth" min="3" max="24" step="3" value="12" class="w-full accent-emerald-600" oninput="calculateEMI()">
+                </div>
+                <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-100 mt-6">
+                    <p class="text-sm text-emerald-800">আনুমানিক মাসিক কিস্তি:</p>
+                    <p id="monthlyEMI" class="text-2xl font-extrabold text-emerald-700">৪,৬০০ টাকা</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-100 flex flex-col justify-between">
+            <div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">💳 আবেদন ফি পেমেন্ট নিয়ম</h3>
+                <p class="text-sm text-slate-600 mb-4">আবেদন ফি বাবদ **৪৫০ টাকা** নিচের বিকাশ পার্সোনাল নম্বরে **সেন্ড মানি (Send Money)** করুন।</p>
+                
+                <div class="bg-pink-50 border border-pink-200 p-4 rounded-xl flex items-center justify-between mb-4">
+                    <div>
+                        <span class="text-xs text-pink-600 block font-semibold">বিকাশ পার্সোনাল নম্বর:</span>
+                        <span id="bkashNum" class="text-lg font-bold text-pink-700">01700-000000</span>
+                    </div>
+                    <button onclick="copyNumber()" class="bg-pink-600 text-white text-xs px-3 py-2 rounded-lg hover:bg-pink-700 transition">নম্বর কপি করুন</button>
+                </div>
+            </div>
+            <div class="text-xs text-slate-500">
+                * পেমেন্ট সফল হওয়ার পর প্রাপ্ত **TrxID** এবং আপনার সঠিক তথ্য দিয়ে নিচের ফর্মটি পূরণ করুন।
+            </div>
+        </div>
+    </main>
+
+    <!-- Application Form Section -->
+    <section id="apply" class="max-w-4xl mx-auto px-4 py-12">
+        <div class="bg-white rounded-2xl shadow-xl p-6 md:p-10 border border-slate-100">
+            <h3 class="text-2xl font-bold text-slate-900 mb-6">📝 লোন আবেদন ফর্ম ও ভেরিফিকেশন</h3>
+            
+            <form onsubmit="submitForm(event)" class="space-y-4">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">পূর্ণ নাম</label>
+                        <input type="text" id="appName" required class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="আপনার নাম লিখুন">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">মোবাইল নম্বর (বিকাশ)</label>
+                        <input type="tel" id="appPhone" required class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="01XXXXXXXXX">
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">এনআইডি (NID) কার্ড নম্বর</label>
+                        <input type="text" id="appNid" required class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="এনআইডি নম্বর লিখুন">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">বিকাশ ট্রানজেকশন আইডি (TrxID)</label>
+                        <input type="text" id="appTrx" required class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="যেমন: 9J8K7L6M5N">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">লোনের পরিমাণ নির্বাচন করুন</label>
+                    <select id="appLoanAmount" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <option value="১০,০০০ টাকা">১০,০০০ টাকা</option>
+                        <option value="৫০,০০০ টাকা">৫০,০০০ টাকা</option>
+                        <option value="১,০০,০০০ টাকা">১,০০,০০০ টাকা</option>
+                        <option value="২,০০,০০০ টাকা">২,০০,০০০ টাকা</option>
+                    </select>
+                </div>
+
+                <!-- Image Upload Fields (NID Front, NID Back & Selfie) -->
+                <div class="grid md:grid-cols-3 gap-4 pt-2">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">🖼️ এনআইডি কার্ড (সামনের পাশ)</label>
+                        <input type="file" id="nidFrontImage" accept="image/*" required class="w-full text-[11px] text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">🖼️ এনআইডি কার্ড (পেছনের পাশ)</label>
+                        <input type="file" id="nidBackImage" accept="image/*" required class="w-full text-[11px] text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">🤳 আইডি কার্ড সহ সেলফি</label>
+                        <input type="file" id="selfieImage" accept="image/*" required class="w-full text-[11px] text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-lg mt-4">আবেদন জমা দিন</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center text-sm">
+        <p>&copy; ২০২৬ ইজি লোন বিডি। সর্বস্বত্ব সংরক্ষিত।</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        function calculateEMI() {
+            let amount = document.getElementById('loanAmount').value;
+            let months = document.getElementById('loanMonth').value;
+            document.getElementById('loanAmountVal').innerText = Number(amount).toLocaleString('en-IN');
+            document.getElementById('loanMonthVal').innerText = months;
+            let totalPayable = Number(amount) * 1.10; 
+            let emi = Math.round(totalPayable / months);
+            document.getElementById('monthlyEMI').innerText = emi.toLocaleString('en-IN') + ' টাকা';
+        }
+
+        function copyNumber() {
+            let num = "01700000000";
+            navigator.clipboard.writeText(num);
+            alert("বিকাশ নম্বরটি কপি করা হয়েছে: " + num);
+        }
+
+        function submitForm(e) {
+            e.preventDefault();
+            let frontFile = document.getElementById('nidFrontImage').files[0];
+            let backFile = document.getElementById('nidBackImage').files[0];
+            let selfieFile = document.getElementById('selfieImage').files[0];
+
+            if (!frontFile || !backFile || !selfieFile) {
+                alert("দয়া করে এনআইডি কার্ডের সামনের পাশ, পেছনের পাশ এবং সেলফি—সবগুলো ছবি আপলোড করুন।");
+                return;
+            }
+
+            let reader1 = new FileReader();
+            let reader2 = new FileReader();
+            let reader3 = new FileReader();
+
+            reader1.onload = function(e1) {
+                reader2.onload = function(e2) {
+                    reader3.onload = function(e3) {
+                        let refId = 'LN-' + Math.floor(10000 + Math.random() * 90000);
+                        
+                        let newLoan = {
+                            id: refId,
+                            name: document.getElementById('appName').value,
+                            phone: document.getElementById('appPhone').value,
+                            nid: document.getElementById('appNid').value,
+                            trx: document.getElementById('appTrx').value,
+                            amount: document.getElementById('appLoanAmount').value,
+                            nidFrontImg: e1.result,
+                            nidBackImg: e2.result,
+                            selfieImg: e3.result,
+                            status: 'Pending Review',
+                            date: new Date().toLocaleDateString('bn-BD')
+                        };
+
+                        let loans = JSON.parse(localStorage.getItem('loanApplications')) || [];
+                        loans.unshift(newLoan);
+                        localStorage.setItem('loanApplications', JSON.stringify(loans));
+
+                        alert("আপনার আবেদন সফলভাবে জমা হয়েছে!\nআপনার রেফারেন্স আইডি হলো: " + refId + "\nদয়া করে এটি সংরক্ষণ করুন।");
+                        e.target.reset();
+                    }
+                    reader3.readAsDataURL(selfieFile);
+                }
+                reader2.readAsDataURL(backFile);
+            }
+            reader1.readAsDataURL(frontFile);
+        }
+
+        function checkStatus() {
+            let val = document.getElementById('trackInput').value.trim();
+            let resultDiv = document.getElementById('statusResult');
+            if(val === "") {
+                alert("দয়া করে রেফারেন্স আইডি বা বিকাশ নম্বর দিন।");
+                return;
+            }
+
+            let loans = JSON.parse(localStorage.getItem('loanApplications')) || [];
+            let found = loans.find(l => l.id === val || l.phone === val);
+
+            resultDiv.classList.remove('hidden');
+            if(found) {
+                let badgeColor = 'bg-amber-100 text-amber-800';
+                if(found.status === 'Approved') badgeColor = 'bg-emerald-100 text-emerald-800';
+                if(found.status === 'Rejected') badgeColor = 'bg-rose-100 text-rose-800';
+
+                resultDiv.innerHTML = `
+                    <div class="space-y-2">
+                        <p class="text-sm font-semibold text-slate-600">রেফারেন্স আইডি: <span class="text-slate-900">${found.id}</span></p>
+                        <p class="text-sm font-semibold text-slate-600">নাম: <span class="text-slate-900">${found.name}</span></p>
+                        <div class="flex items-center space-x-3 mt-3">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold ${badgeColor}">স্ট্যাটাস: ${found.status}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `<p class="text-rose-600 text-sm">দুঃখিত! এই তথ্য দিয়ে কোনো আবেদন খুঁজে পাওয়া যায়নি।</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
